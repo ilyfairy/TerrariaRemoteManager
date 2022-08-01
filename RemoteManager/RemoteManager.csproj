@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DF4BC81A-FE96-4836-B521-528D702DC036}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RemoteManager</RootNamespace>
+    <AssemblyName>RemoteManager</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\TShock\ServerPlugins\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MockHttpServer, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MockHttpServer.1.4.0.0\lib\net45\MockHttpServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.2-beta1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OTAPI">
+      <HintPath>..\..\..\TShock\OTAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TerrariaServer, Version=1.4.3.6, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TShock\TerrariaServer.exe</HintPath>
+    </Reference>
+    <Reference Include="TShockAPI">
+      <HintPath>..\..\..\TShock\ServerPlugins\TShockAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="WatsonWebsocket, Version=2.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WatsonWebsocket.2.3.4\lib\net461\WatsonWebsocket.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="HttpServer.cs" />
+    <Compile Include="Models\Events\ServerBroadcastEvent.cs" />
+    <Compile Include="Models\Events\ServerCommandEvent.cs" />
+    <Compile Include="Models\Events\ServerLeaveEvent.cs" />
+    <Compile Include="Models\Events\ServerChatEvent.cs" />
+    <Compile Include="Models\Events\ServerConnectEvent.cs" />
+    <Compile Include="Models\Events\ServerJoinEvent.cs" />
+    <Compile Include="Models\Events\EventBase.cs" />
+    <Compile Include="Models\Events\MessageType.cs" />
+    <Compile Include="Models\Shared\GroupInfo.cs" />
+    <Compile Include="Models\Shared\PlayerInfo.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="RemoteManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebSocketManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
