@@ -24,7 +24,7 @@ namespace RemoteManager
 
         public WebSocketManager websocketManager = new WebSocketManager();
         public HttpServer httpServer = new HttpServer();
-        
+
         public RemoteManager(Main game) : base(game)
         {
             websocketManager.MessageReceived += Manager_MessageReceived;
@@ -102,7 +102,7 @@ namespace RemoteManager
                 response.Close(Encoding.UTF8.GetBytes("Success"), false);
             });
         }
- 
+
 
         public void Test()
         {
@@ -234,7 +234,7 @@ namespace RemoteManager
         private void OnServerSocketReset(SocketResetEventArgs args)
         {
             //args.Socket.ClientUUID = null;
-            
+
         }
         #endregion
 

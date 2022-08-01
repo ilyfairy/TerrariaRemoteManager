@@ -17,7 +17,7 @@ namespace RemoteManager
 
         public HttpServer()
         {
-            
+
         }
 
         public bool Start(int port)
