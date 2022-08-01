@@ -62,12 +62,10 @@ namespace RemoteManager
             httpServer.BeginGetContext(GetContext, null);
 
             HttpListenerContext context = httpServer.EndGetContext(ar);
-            int pathEndIndex = context.Request.RawUrl.IndexOf('?');
-            if (pathEndIndex == -1) pathEndIndex = context.Request.RawUrl.Length - 1;
-            var split = context.Request.RawUrl.Substring(0,pathEndIndex).Split('/', '\\').Where(v => v != "");
+            string path = context.Request.Url.AbsolutePath;
             foreach (var item in Paths)
             {
-                if (string.Equals(item.Key, string.Join("/", split), StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(item.Key, path, StringComparison.InvariantCultureIgnoreCase))
                 {
                     item.Value?.Invoke(context.Request, context.Response);
                     context.Response.Close();
@@ -82,7 +80,7 @@ namespace RemoteManager
         public void AddPath(string path, Action<HttpListenerRequest,HttpListenerResponse> context)
         {
             var split = path.Split('/', '\\').Where(v => v != "");
-            Paths.Add(string.Join("/", split), context);
+            Paths.Add("/" + string.Join("/", split), context);
         }
 
     }

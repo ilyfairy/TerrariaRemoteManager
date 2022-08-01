@@ -11,6 +11,7 @@ using TerrariaApi.Server;
 using TShockAPI;
 using RemoteManager.Events;
 using RemoteManager.Models.Shared;
+using System.Web;
 
 namespace RemoteManager
 {
@@ -72,29 +73,16 @@ namespace RemoteManager
             });
             httpServer.AddPath("/api/SendCommand", (request, response) =>
             {
-                int queryIndex = request.RawUrl.IndexOf('?');
-                if(queryIndex == -1)
-                {
-                    response.StatusCode = 400;
-                    response.Close(Encoding.UTF8.GetBytes("Invalid parameter"), false);
-                }
-                string query = request.RawUrl.Substring(queryIndex + 1, request.RawUrl.Length - queryIndex - 1);
-                var querys = query.Split('&').Select(v =>
-                {
-                    var tmp = v.Split('=');
-                    if (tmp.Length != 2) return null;
-                    return tmp;
-                }).Where(v => v != null).ToArray();
+                var query = HttpUtility.ParseQueryString(request.Url.Query);
+                string command = query.Get("Command");
 
-                var command = querys.FirstOrDefault(v => string.Equals(v[0], "Command", StringComparison.OrdinalIgnoreCase));
                 if(command == null)
                 {
                     response.StatusCode = 400;
                     response.Close(Encoding.UTF8.GetBytes("Invalid parameter"), false);
                     return;
                 }
-
-                Util.SendCommand(command[1]);
+                Util.SendCommand(command);
                 response.Close(Encoding.UTF8.GetBytes("Success"), false);
             });
             Console.WriteLine();
