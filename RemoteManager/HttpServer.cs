@@ -13,7 +13,7 @@ namespace RemoteManager
         public bool IsStart { get; private set; }
         public string Prefixe => $"http://{Host}:{Port}/";
 
-        private Dictionary<string, Action<HttpListenerRequest,HttpListenerResponse>> Paths = new Dictionary<string, Action<HttpListenerRequest,HttpListenerResponse>>();
+        private List<RouteInfo> Routes = new List<RouteInfo>();
 
         public HttpServer()
         {
@@ -63,11 +63,17 @@ namespace RemoteManager
 
             HttpListenerContext context = httpServer.EndGetContext(ar);
             string path = context.Request.Url.AbsolutePath;
-            foreach (var item in Paths)
+            foreach (var item in Routes)
             {
-                if (string.Equals(item.Key, path, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(item.Path, path, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    item.Value?.Invoke(context.Request, context.Response);
+                    if (Array.IndexOf(item.Methods, context.Request.HttpMethod) == -1)
+                    {
+                        context.Response.StatusCode = 405;
+                        context.Response.Close();
+                        return;
+                    }
+                    item.Action?.Invoke(context.Request, context.Response);
                     context.Response.Close();
                     return;
                 }
@@ -77,12 +83,21 @@ namespace RemoteManager
             context.Response.Close();
         }
 
-        public void AddPath(string path, Action<HttpListenerRequest,HttpListenerResponse> context)
+        public void AddRoute(string path, string methods, Action<HttpListenerRequest, HttpListenerResponse> context)
         {
             var split = path.Split('/', '\\').Where(v => v != "");
-            Paths.Add("/" + string.Join("/", split), context);
+            RouteInfo route = new RouteInfo();
+            route.Path = "/" + string.Join("/", split);
+            route.Methods = methods.ToUpper().Split(',');
+            Routes.Add(route);
         }
 
+        public class RouteInfo
+        {
+            public Action<HttpListenerRequest, HttpListenerResponse> Action { get; set; }
+            public string Path { get; set; }
+            public string[] Methods { get; set; }
+        }
     }
 
 }

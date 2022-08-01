@@ -64,27 +64,8 @@ namespace RemoteManager
             ServerApi.Hooks.ServerBroadcast.Register(this, OnServerBroadcast);
             //ServerApi.Hooks.ServerSocketReset.Register(this, OnServerSocketReset);
 
-            httpServer.AddPath("/api/GetPlayers", (request, response) =>
-            {
-                var players = Util.GetOnlinePlayers().Select(v => new PlayerInfo(v));
-                JArray arr = JArray.FromObject(players);
-                response.ContentType = "application/json";
-                response.Close(Encoding.UTF8.GetBytes(arr.ToString()), false);
-            });
-            httpServer.AddPath("/api/SendCommand", (request, response) =>
-            {
-                var query = HttpUtility.ParseQueryString(request.Url.Query);
-                string command = query.Get("Command");
+            AddHttpRoute();
 
-                if(command == null)
-                {
-                    response.StatusCode = 400;
-                    response.Close(Encoding.UTF8.GetBytes("Invalid parameter"), false);
-                    return;
-                }
-                Util.SendCommand(command);
-                response.Close(Encoding.UTF8.GetBytes("Success"), false);
-            });
             Console.WriteLine();
         }
 
@@ -95,6 +76,31 @@ namespace RemoteManager
             Console.WriteLine("-http-port  指定HttpServer的端口");
             Console.WriteLine("-http-host  指定HttpServer的Host");
             Console.WriteLine("-ws-port  指定WebSocket的端口");
+        }
+
+        public void AddHttpRoute()
+        {
+            httpServer.AddRoute("/api/GetPlayers", "GET,POST", (request, response) =>
+            {
+                var players = Util.GetOnlinePlayers().Select(v => new PlayerInfo(v));
+                JArray arr = JArray.FromObject(players);
+                response.ContentType = "application/json";
+                response.Close(Encoding.UTF8.GetBytes(arr.ToString()), false);
+            });
+            httpServer.AddRoute("/api/SendCommand", "GET,POST", (request, response) =>
+            {
+                var query = HttpUtility.ParseQueryString(request.Url.Query);
+                string command = query.Get("Command");
+
+                if (command == null)
+                {
+                    response.StatusCode = 400;
+                    response.Close(Encoding.UTF8.GetBytes("Invalid parameter"), false);
+                    return;
+                }
+                Util.SendCommand(command);
+                response.Close(Encoding.UTF8.GetBytes("Success"), false);
+            });
         }
  
 
